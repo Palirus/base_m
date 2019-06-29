@@ -1,0 +1,116 @@
+﻿<!doctype html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<meta charset="utf-8">
+<canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+</head>
+<body>
+<input type=button id=gamebutt1 value="начать"/>
+<script type="text/javascript">
+window.addEventListener("load", program_code, false); 
+function program_code() { 
+var ctx=canvas.getContext("2d");
+var w=canvas.width;
+var h=canvas.height;
+var x=y=0;
+var lencell=w/3;
+var cellX=cellY=0;
+var arrgame=[];
+var sethod=true;
+var setcell=true;
+
+	start();
+  
+    gamebutt1.onclick=function(){
+		ctx.clearRect(0, 0, w, h);
+		start();
+		sethod=true;
+	}
+
+	canvas.onclick = function(e) {
+		phy(e);
+		draw2(x,y);
+		sethod=!sethod;
+	}
+    
+	
+	function mouseCoords(e) {
+        var m = [];
+        var rect = canvas.getBoundingClientRect();
+        m.x = e.clientX - rect.left;
+        m.y = e.clientY - rect.top;
+        return m;
+		}
+		
+	function draw2(x,y){
+		ctx.clearRect(0, 0, w, h)
+		setka();
+		for(var i=0;i<arrgame.length;i++){
+		for(var j=0;j<arrgame[i].length;j++){
+		if(arrgame[i][j]==0){
+		ctx.beginPath();
+			ctx.arc(lencell*i+lencell/2,lencell*j+lencell/2,lencell/3 ,0,Math.PI*2,true)
+			ctx.closePath();}
+		if(arrgame[i][j]==1){
+			ctx.moveTo(lencell*i,lencell*j);
+			ctx.lineTo(lencell*(i+1),lencell*(j+1));
+			ctx.closePath();
+			ctx.moveTo(lencell*(i+1),lencell*j);
+			ctx.lineTo(lencell*i,lencell*(j+1));
+			ctx.closePath();}
+        ctx.stroke();
+		}}
+		}
+		
+	function phy(e){
+		var m = mouseCoords(e);                     // получаем координаты курсора мыши
+		x = m.x;
+		y = m.y;
+		cellX=Math.floor(x/lencell);
+		cellY=Math.floor(y/lencell);
+		if((sethod==true)&&(arrgame[cellX][cellY]!=1)) setcell=0;
+		else if(arrgame[cellX][cellY]!=0) setcell=1;
+		arrgame[cellX][cellY]=setcell;
+		
+		for(var i=0;i<arrgame.length;i++){
+			if(arrgame[i][0]+arrgame[i][1]+arrgame[i][2]==0){ alert("победили нолики в столбце " +(i+1));break;}
+			if(arrgame[0][i]+arrgame[1][i]+arrgame[2][i]==0){ alert("победили нолики в строке " +(i+1));break;}
+			if(arrgame[0][0]+arrgame[1][1]+arrgame[2][2]==0){ alert("победили нолики по первой диагонале ");break;}
+			if(arrgame[0][2]+arrgame[1][1]+arrgame[2][0]==0){ alert("победили нолики по второй диагонале ");break;}
+			if(arrgame[i][0]+arrgame[i][1]+arrgame[i][2]==arrgame.length){ alert("победили  крестики в строке " +(i+1));break;}
+			if(arrgame[0][i]+arrgame[1][i]+arrgame[2][i]==arrgame.length){ alert("победили  крестики в строке " +(i+1));break;}
+			if(arrgame[0][0]+arrgame[1][1]+arrgame[2][2]==arrgame.length){ alert("победили крестики по первой диагонале");break;}
+			if(arrgame[0][2]+arrgame[1][1]+arrgame[2][0]==arrgame.length){ alert("победили  крестики по второй диагонале ");break;}
+			}}
+
+	function start() {
+		ctx.clearRect(0, 0, w, h);
+		setka();
+		arrgame = Create2DArray(3,3);
+		console.log(arrgame);	
+		}
+		
+	function Create2DArray(rows,dim) {
+		  var arr = [];
+		  for (var i=0;i<rows;i++) {
+			arr[i] = new Array(3);}
+			return arr;
+		}
+		
+	function setka(){
+		for(var i=0;i<=w;i+=lencell){
+			ctx.beginPath();
+			ctx.moveTo(i,0)
+			ctx.lineTo(i,h);
+			ctx.moveTo(0,i)
+			ctx.lineTo(h,i);
+			ctx.stroke();
+		}
+	}
+			
+}
+
+</script>
+</body>
+</html>
